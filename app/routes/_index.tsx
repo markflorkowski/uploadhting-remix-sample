@@ -1,48 +1,42 @@
-import type { MetaFunction } from "@remix-run/node";
+import type {
+  MetaFunction,
+  LoaderFunction,
+  ActionFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { generatePermittedFileTypes } from "uploadthing/client";
+import CustomUploader from "~/components/uploadthing";
+import { GET, POST } from "./api.uploadthing";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Uploadthing x Remix" },
+    {
+      name: "description",
+      content: "An example of using Uploadthing with Remix.",
+    },
   ];
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const response = await GET(request);
+  const data = await response.json();
+  const config = data.find(
+    ({ slug }: { slug: string }) => slug === "videoAndImage"
+  )?.config;
+  return json({ config: generatePermittedFileTypes(config) });
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const data = await POST(request).then((res) => res.json());
+  return json(data);
 };
 
 export default function Index() {
   return (
-    <div className="font-sans p-4">
-      <h1 className="text-3xl">Welcome to Remix</h1>
-      <ul className="list-disc mt-4 pl-6 space-y-2">
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/quickstart"
-            rel="noreferrer"
-          >
-            5m Quick Start
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/tutorial"
-            rel="noreferrer"
-          >
-            30m Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/docs"
-            rel="noreferrer"
-          >
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <main className="max-w-screen-xl mx-auto p-8 text-center">
+      <h1 className="text-3xl">Uploadthing x Remix</h1>
+      <CustomUploader />
+    </main>
   );
 }
