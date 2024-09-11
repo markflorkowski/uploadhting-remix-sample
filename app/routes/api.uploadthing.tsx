@@ -1,6 +1,5 @@
 import { LoaderFunction, ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/react";
-import { generatePermittedFileTypes } from "uploadthing/client";
 import { createRouteHandler, createUploadthing } from "uploadthing/server";
 import { FileRouter } from "uploadthing/types";
 
@@ -23,19 +22,13 @@ export const uploadRouter = {
 
 export type UploadRouter = typeof uploadRouter;
 
-export const { GET, POST } = createRouteHandler({
+const { GET, POST } = createRouteHandler({
   router: uploadRouter,
 });
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const data = await GET(request).json();
-  const config = data.find(
-    ({ slug }: { slug: string }) => slug === "videoAndImage"
-  )?.config;
-  return json({ config: generatePermittedFileTypes(config) });
-};
+export const loader: LoaderFunction = (event) => GET(event).json(); 
 
-export const action: ActionFunction = async ({ request }) => {
-  const data = await POST(request).then((res) => res.json());
+export const action: ActionFunction = async (event) => {
+  const data = await POST(event).then((res) => res.json());
   return json(data);
 };
