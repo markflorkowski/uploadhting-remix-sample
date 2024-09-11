@@ -1,7 +1,7 @@
 import type {
   MetaFunction,
 } from "@remix-run/node";
-import CustomUploader from "~/components/uploadthing";
+import  { UploadButton } from "~/utils/uploadthing";
 
 export const meta: MetaFunction = () => {
   return [
@@ -13,12 +13,11 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-
 export default function Index() {
   return (
     <main className="max-w-screen-xl mx-auto p-8 text-center">
-      <h1 className="text-3xl">Uploadthing x Remix</h1>
-      <CustomUploader />
+      <h1 className="text-3xl mb-4">Uploadthing x Remix</h1>
+      <UploadButton endpoint="videoAndImage" onClientUploadComplete={(r) => console.log("Upload complete", r)}/>
     </main>
   );
 }
