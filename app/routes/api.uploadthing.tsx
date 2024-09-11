@@ -1,5 +1,3 @@
-import { LoaderFunction, ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/react";
 import { createRouteHandler, createUploadthing } from "uploadthing/server";
 import { FileRouter } from "uploadthing/types";
 
@@ -22,13 +20,6 @@ export const uploadRouter = {
 
 export type UploadRouter = typeof uploadRouter;
 
-const { GET, POST } = createRouteHandler({
+export const { GET: loader, POST: action } = createRouteHandler({
   router: uploadRouter,
 });
-
-export const loader: LoaderFunction = (event) => GET(event).json(); 
-
-export const action: ActionFunction = async (event) => {
-  const data = await POST(event).then((res) => res.json());
-  return json(data);
-};
