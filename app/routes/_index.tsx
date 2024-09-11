@@ -1,12 +1,7 @@
 import type {
   MetaFunction,
-  LoaderFunction,
-  ActionFunction,
 } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { generatePermittedFileTypes } from "uploadthing/client";
-import CustomUploader from "~/components/uploadthing";
-import { GET, POST } from "./api.uploadthing";
+import  { UploadButton } from "~/utils/uploadthing";
 
 export const meta: MetaFunction = () => {
   return [
@@ -18,25 +13,11 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const response = await GET(request);
-  const data = await response.json();
-  const config = data.find(
-    ({ slug }: { slug: string }) => slug === "videoAndImage"
-  )?.config;
-  return json({ config: generatePermittedFileTypes(config) });
-};
-
-export const action: ActionFunction = async ({ request }) => {
-  const data = await POST(request).then((res) => res.json());
-  return json(data);
-};
-
 export default function Index() {
   return (
     <main className="max-w-screen-xl mx-auto p-8 text-center">
-      <h1 className="text-3xl">Uploadthing x Remix</h1>
-      <CustomUploader />
+      <h1 className="text-3xl mb-4">Uploadthing x Remix</h1>
+      <UploadButton endpoint="videoAndImage" onClientUploadComplete={(r) => console.log("Upload complete", r)}/>
     </main>
   );
 }
